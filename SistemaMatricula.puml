@@ -1,0 +1,13 @@
+@startuml
+class com.mycompany.sistemamatriculaciongrupo6.Matricula
+class com.mycompany.sistemamatriculaciongrupo6.Pago
+class com.mycompany.sistemamatriculaciongrupo6.Persona
+class com.mycompany.sistemamatriculaciongrupo6.Propietario
+class com.mycompany.sistemamatriculaciongrupo6.SistemaMatriculacionGrupo6
+class com.mycompany.sistemamatriculaciongrupo6.Vehiculo
+class java.util.ArrayList
+class java.util.Date
+class java.util.List
+class java.util.Scanner
+com.mycompany.sistemamatriculaciongrupo6.Propietario --|> com.mycompany.sistemamatriculaciongrupo6.Persona
+@enduml

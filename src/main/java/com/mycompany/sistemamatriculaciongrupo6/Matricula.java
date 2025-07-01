@@ -11,15 +11,30 @@ import java.util.Date;
  * @author Mini Wernaso
  */
 public class Matricula {
+
     private Vehiculo vehiculo;
     private Date fechaRegistro;
     private boolean estadoPago;
-
+    
+    //Metodo constructor
     public Matricula(Vehiculo vehiculo, Date fechaRegistro, boolean estadoPago) {
-        this.vehiculo = vehiculo;
-        this.fechaRegistro = fechaRegistro;
-        this.estadoPago = estadoPago;
+    if (vehiculo == null) {
+        throw new IllegalArgumentException("El vehículo no puede ser nulo.");
     }
+
+    if (fechaRegistro == null) {
+        throw new IllegalArgumentException("La fecha de registro no puede ser nula.");
+    }
+
+    Date hoy = new Date();
+    if (fechaRegistro.after(hoy)) {
+        throw new IllegalArgumentException("La fecha de registro no puede estar en el futuro.");
+    }
+
+    this.vehiculo = vehiculo;
+    this.fechaRegistro = fechaRegistro;
+    this.estadoPago = estadoPago;
+}
 
     public boolean getEstadoPago() {
         return estadoPago;
@@ -29,27 +44,11 @@ public class Matricula {
         this.estadoPago = estadoPago;
     }
 
-    
-
     public Vehiculo getVehiculo() {
         return vehiculo;
     }
 
-    public void setVehiculo(Vehiculo vehiculo) {
-        this.vehiculo = vehiculo;
-    }
-
-    public Date getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(Date fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
-    
-    
-   @Override
+    @Override
     public String toString() {
         return String.format("""
                              Fecha de generación: %s 
@@ -60,7 +59,7 @@ public class Matricula {
                              Año: %d
                              Tipo: %s
                              Propietario con Cédula: %s
-                             """,fechaRegistro ,vehiculo.getPlaca(),estadoPago,vehiculo.getMarca(), vehiculo.getModelo(),vehiculo.getAnio(),vehiculo.getTipo(),vehiculo.getPropietario().getCedula());
+                             """, fechaRegistro, vehiculo.getPlaca(), estadoPago, vehiculo.getMarca(), vehiculo.getModelo(), vehiculo.getAnio(), vehiculo.getTipo(), vehiculo.getPropietario().getCedula());
     }
-    
+
 }

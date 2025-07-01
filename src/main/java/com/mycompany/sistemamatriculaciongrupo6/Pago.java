@@ -11,55 +11,39 @@ import java.util.Date;
  * @author Mini Wernaso
  */
 public class Pago {
+
     private Matricula matricula;
     private String metodoPago;
     private Double monto;
     private Date fechaPago;
+        //Metodo constructor
 
     public Pago(Matricula matricula, String metodoPago, Double monto, Date fechaPago) {
+        if (matricula == null) {
+            throw new IllegalArgumentException("La matrícula no puede ser nula.");
+        }
+
+        if (metodoPago == null || metodoPago.trim().isEmpty()) {
+            throw new IllegalArgumentException("El método de pago no puede ser nulo o vacío.");
+        }
+
+        if (monto == null || monto <= 0) {
+            throw new IllegalArgumentException("El monto debe ser mayor que cero.");
+        }
+
+        if (fechaPago == null) {
+            throw new IllegalArgumentException("La fecha de pago no puede ser nula.");
+        }
+
+        Date hoy = new Date();
+        if (fechaPago.after(hoy)) {
+            throw new IllegalArgumentException("La fecha de pago no puede ser en el futuro.");
+        }
+
         this.matricula = matricula;
         this.metodoPago = metodoPago;
         this.monto = monto;
         this.fechaPago = fechaPago;
     }
 
-    public Matricula getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(Matricula matricula) {
-        this.matricula = matricula;
-    }
-
-    public String getMetodoPago() {
-        return metodoPago;
-    }
-
-    public void setMetodoPago(String metodoPago) {
-        this.metodoPago = metodoPago;
-    }
-
-    public Double getMonto() {
-        return monto;
-    }
-
-    public void setMonto(Double monto) {
-        this.monto = monto;
-    }
-
-    public Date getFechaPago() {
-        return fechaPago;
-    }
-
-    public void setFechaPago(Date fechaPago) {
-        this.fechaPago = fechaPago;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
 }

@@ -2,7 +2,9 @@ package com.mycompany.sistemamatriculaciongrupo6;
 
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class SistemaMatriculacionGrupo6 {
@@ -11,129 +13,171 @@ public class SistemaMatriculacionGrupo6 {
     static List<Matricula> matriculalist = new ArrayList<>();
     static List<Pago> pagolist = new ArrayList<>();
 
-    public static void registrarPropietario(String nombre, String cedula, String direccion, String telefono) {
+    //metodo instancia
+    public void registrarPropietario(String nombre, String cedula, String direccion, String telefono) {
 
-        if (!propietarioslist.isEmpty()) {
+        // Validaciones básicas
+        if (nombre == null || nombre.trim().isEmpty() || nombre.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre no debe estar vacío ni contener números.");
+        }
 
-            for (Propietario p : propietarioslist) {
-                if (p.getCedula().equals(cedula)) {
-                    System.out.println("Este propietario ya esta registrado");
-                    return;
-                }
+        if (cedula == null || !cedula.matches("\\d{10}")) {
+            throw new IllegalArgumentException("La cédula debe contener exactamente 10 dígitos numéricos.");
+        }
+
+        if (direccion == null || direccion.trim().isEmpty()) {
+            throw new IllegalArgumentException("La dirección no puede estar vacía.");
+        }
+
+        if (telefono == null || !telefono.matches("\\d{7,10}")) {
+            throw new IllegalArgumentException("El teléfono debe tener entre 7 y 10 dígitos.");
+        }
+
+        // Verificar si el propietario ya existe
+        for (Propietario p : propietarioslist) {
+            if (p.getCedula().equals(cedula)) {
+                throw new IllegalArgumentException("Este propietario ya está registrado.");
             }
         }
 
         var propietario = new Propietario(nombre, cedula, direccion, telefono);
         propietarioslist.add(propietario);
-        System.out.println("Propietario registrado con exito!");
+        System.out.println("Propietario registrado con éxito.");
     }
 
-    public static void consultarPropietario(String cedula) {
+    //metodo instancia
+    public void consultarPropietario(String cedula) {
 
-        if (!propietarioslist.isEmpty()) {
-            var encontrado = false;
-            for (Propietario p : propietarioslist) {
-                if (p.getCedula().equals(cedula)) {
-                    System.out.println(p.toString());
-                    encontrado = true;
-                    break;
-                }
-            }
-            if (!encontrado) {
-                System.out.println("No se encuentra ningún propietario con cedula: " + cedula);
-            }
-        } else {
-            System.out.println("No hay propietarios");
+        if (cedula == null || !cedula.matches("\\d{10}")) {
+            throw new IllegalArgumentException("La cédula debe contener exactamente 10 dígitos numéricos.");
         }
 
-    }
-
-    public static void registrarMatricula(String placa, String marca, String modelo, int anio, String tipo, String cedula) {
-
-        if (!propietarioslist.isEmpty()) {
-            var encontrado = false;
-            
-            
-            
-            for (Matricula m : matriculalist) {
-                if (m.getVehiculo().getPlaca().equals(placa)) {
-                    System.out.println("Este vehiculo ya esta matriculado");
-                    return;
-                }
-            }
-            
-            for (Propietario p : propietarioslist) {
-                if (p.getCedula().equals(cedula)) {
-                    var vehiculo = new Vehiculo(placa, marca, modelo, tipo, anio, p);
-                    Date fechaActual = new Date();
-                    var estadoPago = false;
-                    var matricula = new Matricula(vehiculo, fechaActual, estadoPago);
-                    matriculalist.add(matricula);
-                    System.out.println("Matricula registrada con exito");
-                    System.out.println("Recuerde pagar la matricula");
-                    encontrado = true;
-                    break;
-
-                }
-            }
-            if (!encontrado) {
-                System.out.println("No se encontro un propietario con el siguiente número de cédula" + cedula);
-            }
-        } else {
-            System.out.println("No hay propietarios");
+        if (propietarioslist.isEmpty()) {
+            throw new IllegalStateException("No hay propietarios registrados.");
         }
+
+        for (Propietario p : propietarioslist) {
+            if (p.getCedula().equals(cedula)) {
+                System.out.println(p.toString());
+                return;
+            }
+        }
+
+        throw new NoSuchElementException("No se encuentra ningún propietario con la cédula: " + cedula);
     }
 
+    //metodo instancia
+    public void registrarMatricula(String placa, String marca, String modelo, int anio, String tipo, String cedula) {
+
+        // Validaciones básicas
+        if (placa == null || !placa.matches("[A-Z]{3}-\\d{3,4}")) {
+            throw new IllegalArgumentException("La placa debe tener el formato ABC-123 o ABC-1234.");
+        }
+
+        if (marca == null || marca.trim().isEmpty()) {
+            throw new IllegalArgumentException("La marca no puede estar vacía.");
+        }
+
+        if (modelo == null || modelo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El modelo no puede estar vacío.");
+        }
+
+        if (anio < 1900 || anio > Calendar.getInstance().get(Calendar.YEAR)) {
+            throw new IllegalArgumentException("El año del vehículo no es válido.");
+        }
+
+        if (tipo == null || tipo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El tipo de vehículo no puede estar vacío.");
+        }
+
+        if (cedula == null || !cedula.matches("\\d{10}")) {
+            throw new IllegalArgumentException("La cédula debe contener exactamente 10 dígitos.");
+        }
+
+        if (propietarioslist.isEmpty()) {
+            throw new IllegalStateException("No hay propietarios registrados.");
+        }
+
+        for (Matricula m : matriculalist) {
+            if (m.getVehiculo().getPlaca().equals(placa)) {
+                throw new IllegalArgumentException("Este vehículo ya está matriculado.");
+            }
+        }
+
+        for (Propietario p : propietarioslist) {
+            if (p.getCedula().equals(cedula)) {
+                var vehiculo = new Vehiculo(placa, marca, modelo, tipo, anio, p);
+                Date fechaActual = new Date();
+                var matricula = new Matricula(vehiculo, fechaActual, false);
+                matriculalist.add(matricula);
+                System.out.println("Matrícula registrada con éxito. Recuerde pagar la matrícula.");
+                return;
+            }
+        }
+
+        throw new NoSuchElementException("No se encontró un propietario con el número de cédula: " + cedula);
+    }
+
+    //metodo Estatico
     public static void consultarMatricula(String placa) {
-
-        if (!matriculalist.isEmpty()) {
-            var encontrado=false;
-            for (Matricula m : matriculalist) {
-                if (m.getVehiculo().getPlaca().equals(placa)) {
-                    System.out.println(m.toString());
-                    encontrado=true;
-                    break;
-                } 
-            }
-            if(!encontrado){
-                System.out.println("No se encuentra ninguna matricula con esta placa: " + placa);
-            }
-        } else {
-            System.out.println("No hay matriculas");
+        if (placa == null || !placa.matches("[A-Z]{3}-\\d{3,4}")) {
+            throw new IllegalArgumentException("La placa debe tener el formato ABC-123 o ABC-1234.");
         }
 
+        if (matriculalist.isEmpty()) {
+            throw new IllegalStateException("No hay matrículas registradas.");
+        }
+
+        for (Matricula m : matriculalist) {
+            if (m.getVehiculo().getPlaca().equals(placa)) {
+                System.out.println(m.toString());
+                return;
+            }
+        }
+
+        throw new NoSuchElementException("No se encontró ninguna matrícula con esta placa: " + placa);
     }
 
+    //metodo Estatico
     public static void pagarMatricula(String placa, String metodoPago, Double monto, boolean estadoPago) {
-        if (!matriculalist.isEmpty()) {
-            var encontrado=false;
-            for (Matricula m : matriculalist) {
-                if (m.getVehiculo().getPlaca().equals(placa)) {
-                    if (m.getEstadoPago() == false) {
-                        Date fechaPago = new Date();
-                        m.setEstadoPago(estadoPago);
-                        var pago = new Pago(m, metodoPago, monto, fechaPago);
-                        pagolist.add(pago);
-                        System.out.println("Pagado con exito!");
-                    } else {
-                        System.out.println("Ya ha pagado esta matricula anteriormente");
-                    }
-                    encontrado=true;
-                    break;
-                } 
-            }
-            if(!encontrado){
-                System.out.println("No se encuentra un auto matriculado con esta placa " + placa);
-            }
-
-        } else {
-            System.out.println("No hay matriculas registradas");
+        if (placa == null || !placa.matches("[A-Z]{3}-\\d{3,4}")) {
+            throw new IllegalArgumentException("La placa debe tener el formato ABC-123 o ABC-1234.");
         }
+
+        if (metodoPago == null || metodoPago.trim().isEmpty()) {
+            throw new IllegalArgumentException("El método de pago no puede estar vacío.");
+        }
+
+        if (monto == null || monto <= 0) {
+            throw new IllegalArgumentException("El monto debe ser mayor que cero.");
+        }
+
+        if (matriculalist.isEmpty()) {
+            throw new IllegalStateException("No hay matrículas registradas.");
+        }
+
+        for (Matricula m : matriculalist) {
+            if (m.getVehiculo().getPlaca().equals(placa)) {
+                if (m.getEstadoPago()) {
+                    throw new IllegalStateException("Esta matrícula ya ha sido pagada anteriormente.");
+                }
+
+                Date fechaPago = new Date();
+                m.setEstadoPago(estadoPago);
+                var pago = new Pago(m, metodoPago, monto, fechaPago);
+                pagolist.add(pago);
+                System.out.println("¡Pagado con éxito!");
+                return;
+            }
+        }
+
+        throw new NoSuchElementException("No se encontró una matrícula con la placa: " + placa);
     }
 
     public static void main(String[] args) {
         int option;
         Scanner scanner = new Scanner(System.in);
+        SistemaMatriculacionGrupo6 sistema = new SistemaMatriculacionGrupo6();
         do {
             System.out.println("\n--- MENÚ ---");
             System.out.println("1. Registrar propietario");
@@ -144,12 +188,7 @@ public class SistemaMatriculacionGrupo6 {
             System.out.println("6. Salir");
             System.out.print("Seleccione una opción: ");
             option = Integer.parseInt(scanner.nextLine());
-            
-            
-            
-           
-            
-            
+
             switch (option) {
                 case 1 -> {
                     System.out.println("Escriba su nombre: ");
@@ -164,7 +203,7 @@ public class SistemaMatriculacionGrupo6 {
                     System.out.println("Escriba su número de telefono");
                     var telefono = scanner.nextLine();
 
-                    registrarPropietario(nombre, cedula, direccion, telefono);
+                    sistema.registrarPropietario(nombre, cedula, direccion, telefono);
 
                 }
 
@@ -172,7 +211,7 @@ public class SistemaMatriculacionGrupo6 {
                     System.out.println("Escriba su número de cédula");
                     var cedula = scanner.nextLine();
 
-                    consultarPropietario(cedula);
+                    sistema.consultarPropietario(cedula);
                 }
 
                 case 3 -> {
@@ -195,7 +234,7 @@ public class SistemaMatriculacionGrupo6 {
                     System.out.println("Escriba su cédula");
                     var cedula = scanner.nextLine();
 
-                    registrarMatricula(placa, marca, modelo, anio, tipo, cedula);
+                    sistema.registrarMatricula(placa, marca, modelo, anio, tipo, cedula);
                 }
 
                 case 4 -> {
@@ -216,7 +255,7 @@ public class SistemaMatriculacionGrupo6 {
 
                     var monto = 0.0;
                     if (estadoPago) {
-                        
+
                         monto = 17;
                         pagarMatricula(placa, metodoPago, monto, estadoPago);
                     }

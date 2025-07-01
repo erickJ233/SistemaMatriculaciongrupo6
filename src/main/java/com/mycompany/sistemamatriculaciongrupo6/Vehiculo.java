@@ -9,11 +9,42 @@ package com.mycompany.sistemamatriculaciongrupo6;
  * @author Mini Wernaso
  */
 public class Vehiculo {
+
     private String placa, marca, modelo, tipo;
     private int anio;
     private Propietario propietario;
-
+//Metodo constructor
     public Vehiculo(String placa, String marca, String modelo, String tipo, int anio, Propietario propietario) {
+        if (placa == null || placa.trim().isEmpty()) {
+            throw new IllegalArgumentException("La placa no puede ser nula o vacía.");
+        }
+        if (marca == null || marca.trim().isEmpty()) {
+            throw new IllegalArgumentException("La marca no puede ser nula o vacía.");
+        }
+        if (modelo == null || modelo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El modelo no puede ser nulo o vacío.");
+        }
+        if (tipo == null || tipo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El tipo no puede ser nulo o vacío.");
+        }
+
+        int anioActual = java.time.Year.now().getValue();
+        if (anio < 1900 || anio > anioActual) {
+            throw new IllegalArgumentException("El año debe estar entre 1900 y " + anioActual + ".");
+        }
+
+        
+        if (propietario == null) {
+            throw new IllegalArgumentException("El propietario no puede ser nulo.");
+        }
+        String nombrePropietario = propietario.getNombre(); // Asumiendo que hay un método getNombre()
+        if (nombrePropietario == null || nombrePropietario.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del propietario no puede ser nulo o vacío.");
+        }
+        if (nombrePropietario.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre del propietario no debe contener números.");
+        }
+
         this.placa = placa;
         this.marca = marca;
         this.modelo = modelo;
@@ -26,52 +57,24 @@ public class Vehiculo {
         return placa;
     }
 
-    public void setPlaca(String placa) {
-        this.placa = placa;
-    }
-
     public String getMarca() {
         return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
     }
 
     public String getModelo() {
         return modelo;
     }
 
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
-
     public String getTipo() {
         return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     public int getAnio() {
         return anio;
     }
 
-    public void setAnio(int anio) {
-        this.anio = anio;
-    }
-
     public Propietario getPropietario() {
         return propietario;
     }
 
-    public void setPropietario(Propietario propietario) {
-        this.propietario = propietario;
-    }
-    
-
-    
-    
-    
 }

@@ -76,5 +76,6 @@ public class Vehiculo {
     public Propietario getPropietario() {
         return propietario;
     }
+    
 
 }
